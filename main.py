@@ -8,8 +8,17 @@ import pandas as pd
 import joblib
 import re
 
-# Inicializar app
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://asistenteupao.netlify.app"],  # ⚠️ Dominio exacto de tu frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Rutas estáticas y plantillas
 app.mount("/static", StaticFiles(directory="static"), name="static")
