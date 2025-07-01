@@ -1,0 +1,170 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  background: #f9f9f9;
+  color: #333;
+}
+
+.main-header {
+  background: #00458C;
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.main-header input {
+  flex: 1;
+  max-width: 400px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+
+.profile-icon {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  gap: 20px;
+}
+
+.chat-panel {
+  flex: 2;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.bot-avatar {
+  height: 40px;
+  width: 40px;
+}
+
+.online-status {
+  font-size: 12px;
+  color: green;
+}
+
+.chat-welcome h2 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+}
+
+.chat-welcome p {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.faq-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.faq-buttons button {
+  background: #f0f0f0;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 5px;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.chat-input-area button {
+  background: #00458C;
+  color: white;
+  padding: 0 16px;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.side-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.recent-conversations, .quick-links {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.recent-conversations h3,
+.quick-links h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.recent-conversations ul,
+.quick-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-conversations li,
+.quick-links li {
+  padding: 5px 0;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+}
+
+.quick-links a {
+  text-decoration: none;
+  color: #00458C;
+}
+
+.main-footer {
+  background: #f0f0f0;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #555;
+}
+
+.social-icons a {
+  margin-left: 10px;
+  text-decoration: none;
+  font-size: 16px;
+}

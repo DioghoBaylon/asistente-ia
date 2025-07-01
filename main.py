@@ -1,15 +1,21 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import LinearSVC
-from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import joblib
 import re
 
+# Inicializar app
 app = FastAPI()
 
+# Rutas estáticas y plantillas
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
+# Cargar modelo y datos
 model = joblib.load("svm_model.pkl")
 vectorizer = joblib.load("tfidf_vectorizer.pkl")
 le = joblib.load("label_encoder.pkl")
@@ -17,15 +23,15 @@ df = pd.read_csv("df_total.csv")
 
 def limpiar_texto(texto):
     texto = str(texto).lower()
-    texto = re.sub(r"[^\w\s]", "", texto)
-    texto = re.sub(r"\d+", "", texto)
+    texto = re.sub(r'[^\w\s]', '', texto)
+    texto = re.sub(r'\d+', '', texto)
     return texto
 
 def buscar_mejor_respuesta(pregunta, categoria, dataframe, vectorizador):
     preguntas_categoria = dataframe[dataframe["Categoría"] == categoria].copy()
     preguntas_categoria["Pregunta_procesada"] = preguntas_categoria["Pregunta"].apply(limpiar_texto)
-    tfidf_matrix = vectorizador.transform(preguntas_categoria["Pregunta_procesada"])
-    pregunta_vec = vectorizador.transform([limpiar_texto(pregunta)])
+    tfidf_matrix = vectorizer.transform(preguntas_categoria["Pregunta_procesada"])
+    pregunta_vec = vectorizer.transform([limpiar_texto(pregunta)])
     similitudes = cosine_similarity(pregunta_vec, tfidf_matrix).flatten()
     idx_mejor = similitudes.argmax()
     mejor_respuesta = preguntas_categoria.iloc[idx_mejor]["Respuesta"]
@@ -33,6 +39,10 @@ def buscar_mejor_respuesta(pregunta, categoria, dataframe, vectorizador):
 
 class Pregunta(BaseModel):
     texto: str
+
+@app.get("/", response_class=HTMLResponse)
+def serve_home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/preguntar")
 def responder(pregunta: Pregunta):
