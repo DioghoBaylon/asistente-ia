@@ -846,7 +846,7 @@ async function procesarRespuesta(pregunta) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          pregunta: pregunta, // Cambiado de 'question' a 'pregunta' para coincidir con tu endpoint
+          texto: pregunta, // Cambiado de 'question' a 'pregunta' para coincidir con tu endpoint
           contexto: state.user.faculty ? `El usuario pertenece a la facultad de ${state.user.faculty}.` : ''
         })
       });
