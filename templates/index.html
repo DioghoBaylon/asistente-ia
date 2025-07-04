@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Asistente Virtual UPAO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,6 +20,7 @@
       font-family: 'Inter', sans-serif;
       background-color: #f5f7fa;
       color: #333;
+      overflow: hidden;
     }
     .chat-container {
       scrollbar-width: thin;
@@ -146,14 +147,7 @@
         background-position: -200% 0;
       }
     }
-    @media (max-width: 768px) {
-      .header-title {
-        font-size: 1.1rem;
-      }
-      .chat-message {
-        max-width: 90%;
-      }
-    }
+    
     /* Estilos para el modal de bienvenida */
     .welcome-modal {
       position: fixed;
@@ -166,14 +160,126 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      padding: 1rem;
     }
     .welcome-content {
       background-color: white;
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 0.5rem;
       max-width: 500px;
-      width: 90%;
+      width: 100%;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Mejoras responsive */
+    @media (max-width: 1024px) {
+      aside {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 50;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+      aside.visible {
+        transform: translateX(0);
+      }
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 40;
+        display: none;
+      }
+      aside.visible + .sidebar-overlay {
+        display: block;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header-title {
+        font-size: 1.1rem;
+      }
+      .chat-message {
+        max-width: 90%;
+      }
+      .welcome-content {
+        padding: 1rem;
+      }
+      .welcome-modal {
+        padding: 0.5rem;
+      }
+      header {
+        padding: 0.75rem 1rem;
+      }
+      #new-chat-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+      .chat-container {
+        padding: 1rem;
+      }
+      .input-area {
+        padding: 0.75rem;
+      }
+      textarea {
+        padding: 0.75rem;
+      }
+      #send-button {
+        padding: 0.75rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header-title {
+        font-size: 1rem;
+      }
+      .header-subtitle {
+        font-size: 0.7rem;
+      }
+      .welcome-content {
+        padding: 0.75rem;
+      }
+      .chat-message {
+        max-width: 95%;
+      }
+      .suggestion-btn {
+        padding: 0.5rem;
+        font-size: 0.8rem;
+      }
+      .message-enter {
+        max-width: 100%;
+      }
+    }
+    
+    /* Ajustes para pantallas muy pequeñas */
+    @media (max-width: 360px) {
+      .header-title {
+        font-size: 0.9rem;
+      }
+      .welcome-content {
+        padding: 0.5rem;
+      }
+      textarea {
+        font-size: 0.875rem;
+      }
+    }
+    
+    /* Mejoras para el área de entrada en móviles */
+    .input-area {
+      position: relative;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    /* Ajuste para teclado virtual en móviles */
+    @media (max-height: 600px) {
+      .chat-container {
+        max-height: 60vh;
+      }
     }
   </style>
 </head>
@@ -181,23 +287,25 @@
   <!-- Modal de bienvenida -->
   <div id="welcome-modal" class="welcome-modal">
     <div class="welcome-content animate__animated animate__fadeIn">
-      <div class="text-center mb-6">
-        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-          <svg class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="text-center mb-4 sm:mb-6">
+        <div class="mx-auto flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-blue-100">
+          <svg class="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
         </div>
         <h3 class="mt-2 text-lg font-medium text-gray-900">¡Bienvenido al Asistente Virtual UPAO!</h3>
         <p class="mt-1 text-sm text-gray-500">Por favor, ingresa tus datos para personalizar tu experiencia.</p>
       </div>
-      <form id="welcome-form" class="space-y-4">
+      <form id="welcome-form" class="space-y-3 sm:space-y-4">
         <div>
           <label for="user-name" class="block text-sm font-medium text-gray-700">Nombres y Apellidos</label>
-          <input type="text" id="user-name" name="user-name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          <input type="text" id="user-name" name="user-name" required 
+                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base">
         </div>
         <div>
           <label for="user-faculty" class="block text-sm font-medium text-gray-700">Facultad (opcional)</label>
-          <select id="user-faculty" name="user-faculty" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+          <select id="user-faculty" name="user-faculty" 
+                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base">
             <option value="">Selecciona una facultad</option>
             <option value="Ingeniería">Ingeniería</option>
             <option value="Ciencias de la Salud">Ciencias de la Salud</option>
@@ -206,8 +314,9 @@
             <option value="Educación y Humanidades">Educación y Humanidades</option>
           </select>
         </div>
-        <div class="pt-2">
-          <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <div class="pt-1 sm:pt-2">
+          <button type="submit" 
+                  class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm sm:text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             Comenzar
           </button>
         </div>
@@ -215,32 +324,42 @@
     </div>
   </div>
 
-  <header class="university-bg text-white py-3 px-6 shadow-md border-b-4 border-orange-500">
+  <header class="university-bg text-white py-2 sm:py-3 px-4 sm:px-6 shadow-md border-b-4 border-orange-500">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="bg-white/20 p-2 rounded-lg shadow-sm backdrop-blur-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="menu-button" class="md:hidden mr-1 text-white focus:outline-none">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="bg-white/20 p-1 sm:p-2 rounded-lg shadow-sm backdrop-blur-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path d="M12 14l9-5-9-5-9 5 9 5z" />
             <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
           </svg>
         </div>
         <div>
-          <h1 class="text-xl font-bold header-title">Asistente Virtual UPAO</h1>
-          <p class="text-xs text-white/80 font-medium">Tu guía académica inteligente</p>
+          <h1 class="text-lg sm:text-xl font-bold header-title">Asistente Virtual UPAO</h1>
+          <p class="text-xs text-white/80 font-medium header-subtitle">Tu guía académica inteligente</p>
         </div>
       </div>
-      <button id="new-chat-btn" class="px-4 py-2 bg-blue-900 text-primary-dark text-sm font-semibold rounded-lg hover:bg-blue-800 transition-all floating-btn flex items-center">
+      <button id="new-chat-btn" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-900 text-primary-dark text-xs sm:text-sm font-semibold rounded-lg hover:bg-blue-800 transition-all floating-btn flex items-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
         </svg>
-        Nueva Conversación
+        <span class="hidden sm:inline">Nueva Conversación</span>
+        <span class="sm:hidden">Nueva</span>
       </button>
     </div>
   </header>
-  <main class="flex-1 flex overflow-hidden">
-    <aside class="w-64 border-r border-gray-200 bg-white flex flex-col hidden md:flex transition-all duration-300 z-10">
-      <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+  
+  <div class="flex-1 flex overflow-hidden relative">
+    <!-- Overlay para sidebar en móvil -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    
+    <aside id="sidebar" class="w-64 border-r border-gray-200 bg-white flex flex-col transition-all duration-300 z-50">
+      <div class="p-3 sm:p-4 border-b border-gray-200 flex justify-between items-center">
         <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider">Conversaciones</h2>
         <button class="text-primary hover:text-primary-dark transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -250,7 +369,7 @@
       </div>
       <div id="conversations-list" class="flex-1 overflow-y-auto p-2 space-y-1">
       </div>
-      <div class="p-3 border-t border-gray-200 text-center">
+      <div class="p-2 sm:p-3 border-t border-gray-200 text-center">
         <button class="text-xs text-primary hover:text-primary-dark font-medium flex items-center justify-center w-full">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -260,16 +379,12 @@
         </button>
       </div>
     </aside>
+    
     <section class="flex-1 flex flex-col overflow-hidden relative">
-      <button onclick="toggleSidebar()" class="md:hidden absolute bottom-20 right-4 bg-primary text-white p-3 rounded-full shadow-lg floating-btn pulse-animation z-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-      <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 chat-container">
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 chat-container">
         <!-- Mensajes se agregarán aquí dinámicamente -->
       </div>
-      <div class="border-t border-gray-200 p-4 bg-white shadow-sm">
+      <div class="border-t border-gray-200 p-3 sm:p-4 bg-white shadow-sm input-area">
         <div class="max-w-3xl mx-auto relative">
           <div class="flex items-end space-x-2">
             <div class="flex-1 relative">
@@ -277,7 +392,7 @@
                 id="user-input"
                 rows="1"
                 placeholder="Escribe tu consulta aquí..."
-                class="w-full p-3 pr-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm bg-white shadow-sm input-focus transition-all placeholder-gray-400"
+                class="w-full p-2 sm:p-3 pr-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm bg-white shadow-sm input-focus transition-all placeholder-gray-400"
                 onkeydown="if(event.key === 'Enter' && !event.shiftKey) {event.preventDefault(); handleSend();}"></textarea>
               <div class="absolute right-2 bottom-2 flex space-x-1">
                 <button onclick="showSuggestions()" class="text-gray-400 hover:text-primary transition-colors p-1" title="Sugerencias">
@@ -295,7 +410,7 @@
             <button 
               onclick="handleSend()"
               id="send-button"
-              class="p-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-all send-btn flex items-center justify-center">
+              class="p-2 sm:p-3 bg-primary text-white rounded-xl hover:bg-primary-dark transition-all send-btn flex items-center justify-center">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
@@ -312,7 +427,8 @@
         </div>
       </div>
     </section>
-  </main>
+  </div>
+
   <script>
     const state = {
       currentConversationId: null,
@@ -323,7 +439,7 @@
         faculty: null,
         role: "student"
       },
-      apiEndpoint: "https://asistente-ia-dzgr.onrender.com" // Endpoint de Render
+      apiEndpoint: "https://asistente-ia-dzgr.onrender.com" 
     };
 
     const predefinedResponses = {
@@ -345,6 +461,21 @@
     };
 
     document.addEventListener('DOMContentLoaded', function() {
+      // Manejar el menú de hamburguesa
+      const menuButton = document.getElementById('menu-button');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebar-overlay');
+      
+      menuButton.addEventListener('click', function() {
+        sidebar.classList.toggle('visible');
+        sidebarOverlay.style.display = sidebar.classList.contains('visible') ? 'block' : 'none';
+      });
+      
+      sidebarOverlay.addEventListener('click', function() {
+        sidebar.classList.remove('visible');
+        sidebarOverlay.style.display = 'none';
+      });
+      
       // Verificar si el usuario ya completó el formulario
       const savedUser = localStorage.getItem('upaAssistantUser');
       if (savedUser) {
@@ -359,6 +490,9 @@
 
       document.getElementById('user-input').focus();
       document.getElementById('new-chat-btn').addEventListener('click', createNewConversation);
+      
+      // Ajustar el tamaño del textarea al cargar
+      adjustTextareaHeight();
     });
 
     function handleWelcomeForm(e) {
@@ -458,6 +592,12 @@
         });
       }
       chatContainer.scrollTop = chatContainer.scrollHeight;
+      
+      // Cerrar sidebar en móvil después de seleccionar conversación
+      if (window.innerWidth < 1024) {
+        document.getElementById('sidebar').classList.remove('visible');
+        document.getElementById('sidebar-overlay').style.display = 'none';
+      }
     }
 
     function mostrarWelcomeMessage() {
@@ -476,14 +616,14 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
             </svg>
           </div>
-          <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeIn">
+          <div class="bg-white p-3 sm:p-4 rounded-xl shadow-sm border border-gray-100 animate__animated animate__fadeIn">
             <p class="font-medium text-gray-800">${welcomeText}</p>
             <p class="mt-2 text-gray-600">Estoy aquí para ayudarte con información académica, procesos universitarios y más. ¿En qué puedo ayudarte hoy?</p>
             
-            <div class="mt-4">
+            <div class="mt-3 sm:mt-4">
               <p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Preguntas frecuentes:</p>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <button onclick="sendSuggestion('¿Cómo es el proceso de matrícula?')" class="suggestion-btn text-left p-3 bg-white rounded-lg text-sm flex items-start">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button onclick="sendSuggestion('¿Cómo es el proceso de matrícula?')" class="suggestion-btn text-left p-2 sm:p-3 bg-white rounded-lg text-xs sm:text-sm flex items-start">
                   <span class="bg-primary/10 text-primary p-1 rounded mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -491,7 +631,7 @@
                   </span>
                   Proceso de matrícula
                 </button>
-                <button onclick="sendSuggestion('¿Dónde veo mi horario de clases?')" class="suggestion-btn text-left p-3 bg-white rounded-lg text-sm flex items-start">
+                <button onclick="sendSuggestion('¿Dónde veo mi horario de clases?')" class="suggestion-btn text-left p-2 sm:p-3 bg-white rounded-lg text-xs sm:text-sm flex items-start">
                   <span class="bg-primary/10 text-primary p-1 rounded mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -499,7 +639,7 @@
                   </span>
                   Horario de clases
                 </button>
-                <button onclick="sendSuggestion('¿Qué necesito para un certificado de estudios?')" class="suggestion-btn text-left p-3 bg-white rounded-lg text-sm flex items-start">
+                <button onclick="sendSuggestion('¿Qué necesito para un certificado de estudios?')" class="suggestion-btn text-left p-2 sm:p-3 bg-white rounded-lg text-xs sm:text-sm flex items-start">
                   <span class="bg-primary/10 text-primary p-1 rounded mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -507,7 +647,7 @@
                   </span>
                   Certificados de estudios
                 </button>
-                <button onclick="sendSuggestion('¿Cómo contacto a mi profesor?')" class="suggestion-btn text-left p-3 bg-white rounded-lg text-sm flex items-start">
+                <button onclick="sendSuggestion('¿Cómo contacto a mi profesor?')" class="suggestion-btn text-left p-2 sm:p-3 bg-white rounded-lg text-xs sm:text-sm flex items-start">
                   <span class="bg-primary/10 text-primary p-1 rounded mr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -532,7 +672,7 @@
       
       if (sortedConversations.length === 0) {
         listContainer.innerHTML = `
-          <div class="p-4 text-center text-gray-500 text-sm">
+          <div class="p-3 text-center text-gray-500 text-sm">
             <p>No hay conversaciones recientes</p>
             <button onclick="createNewConversation()" class="mt-2 text-primary hover:text-primary-dark font-medium">
               Crear nueva conversación
@@ -544,16 +684,16 @@
       
       sortedConversations.forEach(conv => {
         const convElement = document.createElement("div");
-        convElement.className = `conversation-item p-3 rounded-lg cursor-pointer ${conv.id === state.currentConversationId ? 'active' : ''}`;
+        convElement.className = `conversation-item p-2 sm:p-3 rounded-lg cursor-pointer ${conv.id === state.currentConversationId ? 'active' : ''}`;
         convElement.dataset.conversationId = conv.id;
         const firstUserMessage = conv.messages.find(m => m.sender === 'user');
         const previewText = firstUserMessage ? 
-          (firstUserMessage.content.length > 40 ? 
-           firstUserMessage.content.substring(0, 40) + '...' : 
+          (firstUserMessage.content.length > 30 ? 
+           firstUserMessage.content.substring(0, 30) + '...' : 
            firstUserMessage.content) : 'Nueva conversación';
         convElement.innerHTML = `
           <div class="flex justify-between items-start">
-            <div class="font-medium text-gray-800 truncate">${conv.title}</div>
+            <div class="font-medium text-gray-800 truncate text-sm sm:text-base">${conv.title}</div>
             <span class="text-xs text-gray-400">${formatTime(conv.updatedAt)}</span>
           </div>
           <div class="text-xs text-gray-500 mt-1 truncate">${previewText}</div>
@@ -567,9 +707,6 @@
         `;
         convElement.addEventListener('click', () => {
           loadConversation(conv.id);
-          if (window.innerWidth < 768) {
-            document.querySelector('aside').classList.add('hidden');
-          }
         });
 
         listContainer.appendChild(convElement);
@@ -601,7 +738,7 @@
       const texto = input.value.trim();
       
       if (texto && state.currentConversationId) {
-
+        // Animación del botón de enviar
         const sendBtn = document.getElementById('send-button');
         sendBtn.classList.add('animate__animated', 'animate__pulse');
         setTimeout(() => {
@@ -611,12 +748,18 @@
         addMessageToConversation('user', texto);
         mostrarPregunta(texto);
         
-       
+        // Procesar la respuesta
         await procesarRespuesta(texto);
         
         input.value = "";
-        input.style.height = 'auto';
+        adjustTextareaHeight();
       }
+    }
+
+    function adjustTextareaHeight() {
+      const textarea = document.getElementById('user-input');
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
     }
 
     function addMessageToConversation(sender, content) {
@@ -632,7 +775,7 @@
       conversation.updatedAt = new Date().toISOString();
       
       if (conversation.messages.length === 1 && sender === 'user') {
-        conversation.title = content.length > 30 ? content.substring(0, 30) + '...' : content;
+        conversation.title = content.length > 25 ? content.substring(0, 25) + '...' : content;
       }
       
       detectAndTagConversation(conversation, content);
@@ -663,67 +806,67 @@
       conversation.tags = Array.from(tags);
     }
 
-    async function procesarRespuesta(pregunta) {
-      if (!state.currentConversationId) return;
-      const preguntaLower = pregunta.toLowerCase();
-      let respuesta = null;
+async function procesarRespuesta(pregunta) {
+  if (!state.currentConversationId) return;
+  const preguntaLower = pregunta.toLowerCase();
+  let respuesta = null;
+  
+  mostrarTypingIndicator();
+  
+  // Espera simulada para que parezca que el asistente está pensando
+  await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+  
+  // Respuestas para saludos, despedidas y agradecimientos
+  if (/(hola|buen(a|o)s (días|dias|tardes|noches)|hi|hello)/i.test(preguntaLower)) {
+    respuesta = state.user.name 
+      ? getRandomResponse(predefinedResponses.greetings).replace('{name}', state.user.name)
+      : "¡Hola! Soy el asistente virtual de la UPAO. ¿En qué puedo ayudarte hoy?";
+  } 
+  else if (/(adiós|chau|bye|hasta luego|nos vemos)/i.test(preguntaLower)) {
+    respuesta = state.user.name 
+      ? getRandomResponse(predefinedResponses.farewells).replace('{name}', state.user.name)
+      : "¡Hasta luego! Recuerda que puedes volver cuando necesites ayuda.";
+  }
+  else if (/(cómo estás|how are you|qué tal)/i.test(preguntaLower)) {
+    respuesta = state.user.name 
+      ? `¡Estoy aquí para ayudarte ${state.user.name}! ¿En qué puedo asistirte hoy?`
+      : "¡Estoy aquí para ayudarte! ¿En qué puedo asistirte hoy?";
+  }
+  else if (/(gracias|thank you|thanks|agradecido)/i.test(preguntaLower)) {
+    respuesta = state.user.name 
+      ? getRandomResponse(predefinedResponses.thanks).replace('{name}', state.user.name)
+      : "¡De nada! Es un placer ayudarte.";
+  }
+  else {
+    // Para otras preguntas, usar la API de Render
+    try {
+      const response = await fetch(state.apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          pregunta: pregunta, // Cambiado de 'question' a 'pregunta' para coincidir con tu endpoint
+          contexto: state.user.faculty ? `El usuario pertenece a la facultad de ${state.user.faculty}.` : ''
+        })
+      });
       
-      mostrarTypingIndicator();
-      
-      
-      await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
-      
-    
-      if (/(hola|buen(a|o)s (días|dias|tardes|noches)|hi|hello)/i.test(preguntaLower)) {
-        respuesta = state.user.name 
-          ? getRandomResponse(predefinedResponses.greetings).replace('{name}', state.user.name)
-          : "¡Hola! Soy el asistente virtual de la UPAO. ¿En qué puedo ayudarte hoy?";
-      } 
-      else if (/(adiós|chau|bye|hasta luego|nos vemos)/i.test(preguntaLower)) {
-        respuesta = state.user.name 
-          ? getRandomResponse(predefinedResponses.farewells).replace('{name}', state.user.name)
-          : "¡Hasta luego! Recuerda que puedes volver cuando necesites ayuda.";
+      if (response.ok) {
+        const data = await response.json();
+        respuesta = data.respuesta; // Asegúrate de que esto coincida con la respuesta de tu backend
+      } else {
+        respuesta = "Lo siento, estoy teniendo problemas para conectarme con el servidor. Por favor intenta más tarde.";
       }
-      else if (/(cómo estás|how are you|qué tal)/i.test(preguntaLower)) {
-        respuesta = state.user.name 
-          ? `¡Estoy aquí para ayudarte ${state.user.name}! ¿En qué puedo asistirte hoy?`
-          : "¡Estoy aquí para ayudarte! ¿En qué puedo asistirte hoy?";
-      }
-      else if (/(gracias|thank you|thanks|agradecido)/i.test(preguntaLower)) {
-        respuesta = state.user.name 
-          ? getRandomResponse(predefinedResponses.thanks).replace('{name}', state.user.name)
-          : "¡De nada! Es un placer ayudarte.";
-      }
-      else {
-        
-        try {
-          const response = await fetch(state.apiEndpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              question: pregunta,
-              context: state.user.faculty ? `El usuario pertenece a la facultad de ${state.user.faculty}.` : ''
-            })
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            respuesta = data.answer;
-          } else {
-            respuesta = "Lo siento, estoy teniendo problemas para conectarme con el servidor. Por favor intenta más tarde.";
-          }
-        } catch (error) {
-          console.error("Error al conectar con la API:", error);
-          respuesta = "Ocurrió un error al procesar tu pregunta. Por favor intenta de nuevo.";
-        }
-      }
-      
-      removeTypingIndicator();
-      addMessageToConversation('assistant', respuesta);
-      mostrarRespuesta(respuesta);
+    } catch (error) {
+      console.error("Error al conectar con la API:", error);
+      respuesta = "Ocurrió un error al procesar tu pregunta. Por favor intenta de nuevo.";
     }
+  }
+  
+  removeTypingIndicator();
+  addMessageToConversation('assistant', respuesta);
+  mostrarRespuesta(respuesta);
+}
 
     function mostrarPregunta(texto, saveToHistory = true) {
       const chatContainer = document.getElementById('chat-messages');
@@ -731,7 +874,7 @@
       entrada.className = "max-w-3xl mx-auto message-enter animate__animated animate__fadeInUp";
       entrada.innerHTML = `
         <div class="flex justify-end">
-          <div class="bg-blue-900 text-white p-3 rounded-xl shadow-md max-w-[85%] chat-message">
+          <div class="bg-blue-900 text-white p-3 rounded-xl shadow-md max-w-[90%] sm:max-w-[85%] chat-message">
             <div class="whitespace-pre-line">${texto}</div>
             <div class="text-right mt-1">
               <span class="text-xs text-white/80">${formatTime(new Date())}</span>
@@ -748,7 +891,7 @@
       const salida = document.createElement("div");
       salida.className = "max-w-3xl mx-auto message-enter animate__animated animate__fadeInUp";
       
-      
+      // Formatear enlaces Markdown a HTML
       const formattedText = texto.replace(
         /\[(.*?)\]\((.*?)\)/g, 
         '<a href="$2" target="_blank" class="text-primary hover:underline">$1</a>'
@@ -838,16 +981,14 @@
       }, 1000);
     }
 
-    function toggleSidebar() {
-      const sidebar = document.querySelector('aside');
-      sidebar.classList.toggle('hidden');
-      sidebar.classList.toggle('animate__animated');
-      sidebar.classList.toggle('animate__slideInLeft');
-    }
-    document.getElementById('user-input').addEventListener('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
-    });
+    // Ajustar altura del textarea dinámicamente
+    document.getElementById('user-input').addEventListener('input', adjustTextareaHeight);
+    
+    // Ajustar al cargar la página
+    window.addEventListener('load', adjustTextareaHeight);
+    
+    // Ajustar al cambiar el tamaño de la ventana
+    window.addEventListener('resize', adjustTextareaHeight);
   </script>
 </body>
 </html>
